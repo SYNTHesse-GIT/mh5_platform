@@ -1,5 +1,5 @@
-SC16IS7XX driver for Raspberry Pi
-=================================
+SC16IS7XX dual UART driver
+==========================
 
 The MH5 HAT uses an SC16IS762 chip to provide 2 semi-duplex TTL Dynamixel channels for communicating with the servos and sensors.
 

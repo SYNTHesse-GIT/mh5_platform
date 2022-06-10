@@ -114,3 +114,22 @@ After reboot you should still be able to log on using the same SSH connection (i
 
 ### Connect wlan1
 
+To access a WiFi network you only need to enter the details in the `/etc/wpa_supplicant/wpa_supplicant.conf`, but if you would like not to have the password in clear the best is to encrypt the password using `wpa_passphrase`, like this:
+```
+wpa_passphrase "<SSID>" | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null
+```
+Replace SSID with the name of the WiFi you want to associate with and enter the passphrase. The `wpa_passphrase` will store the access details in the conf file. Please note that both the encrypted and the clear password will be storred there, so you should then run:
+```
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+and remove the clear password from the file.
+
+If you want to connect directly use now:
+```
+wpa_cli -i wlan1 reconfigure
+```
+To see the status of your connections run:
+```
+ifconfig
+```
+All interfaces should be connected. You can now disconnect the Ethernet cable.

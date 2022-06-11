@@ -269,3 +269,26 @@ cd catkin_ws
 catkin build
 ```
 Now you're ready to go with the ROS! Any custom packages can be added to `~/catkin_ws/src` while standard ROS packages (if avaialble for `aarch` and python 3.9 can be installed with `mamba install ros-noetic-<package-name-with-dashes>`. Don't forget to `ssource devel/setup.bash` before using your packages. Better add this in the `~/.bashrc`. You should also add `conda activate rs` in case this is the default environment that you use on the robot.
+
+### MH5 ROS packages
+
+Install dependent packages:
+```
+mamba install -c robostack ros-noetic-image-transport 
+```
+(These ones need to be updated in RoboStack):
+```
+ros_control
+ros_controllers
+cv_camera
+```
+
+Now install ROS packages for MH5:
+```
+cd ~/catkin_ws/src
+git clone https://github.com/SYNTHesse-GIT/mh5_common
+git clone https://github.com/SYNTHesse-GIT/mh5_robot
+git clone https://github.com/SYNTHesse-GIT/mh5_behaviour
+cd ..
+catkin build
+```

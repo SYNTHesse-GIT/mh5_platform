@@ -241,3 +241,31 @@ Now we use mamba to setup a new environment that will install packages from ros-
 ```
 mamba create -n rs ros-noetic-robot python=3.9 -c robostack -c robostack-experimental -c conda-forge --no-channel-priority --override-channels
 ```
+You can now activate the environment:
+```
+conda activate rs
+```
+And install a few other things needed for development:
+```
+mamba install compilers cmake pkg-config make ninja
+mamba install catkin_tools
+mamba install rosdep
+```
+Deactivate and reactivate the environment:
+```
+conda deactivate
+conda activate rs
+```
+And initialize `rosdep`:
+```
+rosdep init
+rosdep update
+```
+Create a project directory in the home of `mh5`:
+```
+cd
+mkdir -p catkin_ws/src
+cd catkin_ws
+catkin build
+```
+Now you're ready to go with the ROS! Any custom packages can be added to `~/catkin_ws/src` while standard ROS packages (if avaialble for `aarch` and python 3.9 can be installed with `mamba install ros-noetic-<package-name-with-dashes>`. Don't forget to `ssource devel/setup.bash` before using your packages. Better add this in the `~/.bashrc`. You should also add `conda activate rs` in case this is the default environment that you use on the robot.

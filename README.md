@@ -272,15 +272,23 @@ Now you're ready to go with the ROS! Any custom packages can be added to `~/catk
 
 ### MH5 ROS packages
 
+We need this for catkin to find `gtest`:
+```
+sudo apt-get install libgtest-dev
+sudo apt-get install libi2c-dev
+```
+
 Install dependent packages:
 ```
-mamba install -c robostack ros-noetic-image-transport 
+mamba install -c robostack ros-noetic-image-transport ros-noetic-cv-bridge ros-noetic-camera-info-manager ros-noetic-roslint ros-noetic-realtime-tools ros-noetic-control-toolbox ros-noetic-dynamixel-sdk ros-noetic-resource-retriever
 ```
 (These ones need to be updated in RoboStack):
 ```
 ros_control
 ros_controllers
 cv_camera
+four_wheel_steering_msgs
+urdf_geometry_parser
 ```
 
 Now install ROS packages for MH5:

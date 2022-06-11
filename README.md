@@ -133,3 +133,111 @@ To see the status of your connections run:
 ifconfig
 ```
 All interfaces should be connected. You can now disconnect the Ethernet cable.
+
+## Hardware interfaces
+
+### TFT Display
+
+We will start with the TFT display. First get into the `ili9341` directory and then compile the device tree overlay. The driver for the ili9341 is already included in the standard kernel, but the exisiting overlays are not configured in the same way as the TFT used in MH5.
+```
+dtc -I dts -O dtb -o mh5-display.dtbo mh5-display.dts
+```
+And copy it in the `/boot/overlays` directory:
+```
+sudo cp mh5-display.dtbo /boot/overlays/
+```
+To be used, we need to update the `config.txt` file:
+```
+sudo nano /boot/config.txt
+```
+and enter at the end after `[all]`:
+```
+dtparam=spi=on
+dtparam=i2c1=on
+dtparam=i2c_arm=on
+dtoverlay=mh5-display,speed=25000000,fps=20
+```
+To activate the console add the following in `/boot/cmdline.txt`:
+```
+sudo nano /boot/cmdline.txt
+```
+and add:
+```
+fbcon=map:10 fbcon=font:VGA8x8
+```
+after the `rootwait` with oobly one space after that to `fbcon`. You can now reboot the machine:
+```
+sudo systemctl reboot
+```
+While booting the system messages should start being displayed on the screen and after that the console prompt will be shown. If using a Bluetooth keyboard you should be able to enter commands directly.
+
+To change the font size to a more readable one use:
+```
+sudo dpkg-reconfigure console-setup
+```
+and chooe: utf-8 -> Guess optimal character set -> Terminus -> 6x12
+
+### Dynamixel bus
+
+To activate the drivers for SC16IS762 chip you need to compile and deploy the device tree overlay and update the `config.txt` file. First go to the `sc16is7xx`directory. Compile the dts:
+```
+dtc -I dts -O dtb -o sc16is762-spi0-ce1.dtbo sc16is762-spi0-overlay.dts 
+```
+The existing overlays for SC16IS7XX are not suitable because they only assume CE0 either for SPI0 or SPI1. We use SPI0, but we have a separate CE1 pin that we configure in this overlay. Also, we configure a higher communictation speed because we are using a higher frequency crystal on the board. Then copy the dtbo to the `/boot/overlays`:
+```
+sudo cp sc16is762-spi0-ce1.dtbo /boot/overlays/
+```
+Activate the interface by including this in the `config.txt`:
+```
+dtoverlay=sc16is762-spi0-ce1
+```
+(you can add it after the `mh5-display` one.)
+Reboot the system (`sudo systemctl reboot`) and check after logging in that two new `tty` ports are shown:
+```
+ls /dev/ttySC*
+```
+### Fan
+
+(This doesn't work well with the 3 wire 4010 fan).
+
+The fan drivers need `dkms`. Frist install this:
+```
+sudo apt install dkms
+sudo apt install raspberrypi-kernel-headers
+```
+(for some reasons the installation of dkms picks older 5.10 headers which are fixed with the next install.
+
+Then install:
+```
+git clone https://github.com/neg2led/cm4io-fan.git
+cd cm4io-fan
+sudo chmod 777 install.sh
+sudo ./install.sh
+```
+
+## Software
+
+### Mambaforge
+
+In the mh5 home directory get the lateast installer for miniforge:
+```
+wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh
+```
+Change the access and run the installer:
+```
+chmod +x Miniforge3-Linux-aarch64.sh
+./Miniforge3-Linux-aarch64.sh
+```
+Accept the defaults and the installer finish. Indicate to run conda init at the end. Exit your ssh session and relog (this will activate the conda environment).
+
+No install mamba (it's faster and works better with large environments like ours). This is done only once in the (base) environment.
+```
+conda install mamba -c conda-forge
+```
+
+### Setup a ROS environment
+
+Now we use mamba to setup a new environment that will install packages from ros-noetic-robot.
+```
+mamba create -n rs ros-noetic-robot python=3.9 -c robostack -c robostack-experimental -c conda-forge --no-channel-priority --override-channels
+```

@@ -1,0 +1,39 @@
+// Overlay for FocalTech System Touchcontroller with i2c
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2835";
+
+
+    fragment@0 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+			#size-cells = <0>;
+			ft6336g: ft6336g@38 {
+				compatible = "focaltech,ft6236";
+				status = "okay";
+				reg = <0x38>;
+				interrupt-parent = <&gpio>;
+				interrupts = <17 0x8>; /* GPIO17 IRQ_TYPE_LEVEL_LOW */
+				reset-gpios = <&gpio 27 1>; /* GPIO27 GPIO_ACTIVE_LOW */
+				// wake-gpios = <&pio 7 7 1>; /* PH7 GPIO_ACTIVE_LOW */
+				touchscreen-size-x = <240>;
+				touchscreen-size-y = <320>;
+				// touchscreen-inverted-x;
+				// touchscreen-swapped-x-y;
+			};
+        };
+    };
+
+    // __overrides__ {
+	// 	addr = <&ft6336g>, "reg:0";
+	// 	// i2c_gpio_delay_us = <&i2c_gpio>,"i2c-gpio,delay-us:0";
+	// 	// bus = <&i2c_gpio>, "reg:0";
+    //     interrupt_pin = <&ft6336g>, "interrupts:0";
+    //     reset_pin = <&ft6336g>, ""
+
+	// };
+
+};

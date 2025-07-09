@@ -27,4 +27,4 @@ command 0x21
 command 0x29
 delay 100
 # rotate 0 portrait (p.129) 
-command 0x36 0x00
+command 0x36 0x08

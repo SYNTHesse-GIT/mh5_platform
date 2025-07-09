@@ -19,3 +19,26 @@ dtparam=reset-gpio=24,dc-gpio=25
 
 Please note that the orientation will be portrait with the pin header on the lower side. The actual orientation control is given both by the 0x36 register in the init file (bin) as well as the `width` and `height` settings in the `config.txt`. Changing one without the other to match will result in images that are covering partially the screen.
 
+## Touch
+
+The display uses FT6336G touch controller over I2C. As there is no overlay that can be used we have a DTS that configures an overlay that deals with this. The overlay uses the FT6236 version of the driver and is expected to work over the i2c1 pins (GPIO2,3). Additionally uses GPIO 17 for interrupt and GPIO 27 for reset.
+
+The DTS can be complied with:
+
+```
+dtc -I dts -O dtb -o ft6336g.dtbo ft6336g.dts
+```
+
+And should be copied to the `/boot/firmware/overlays/`:
+
+```
+sudo cp ft6336g.dtbo /boot/firmware/overlays/
+```
+
+The `install.sh` script will do that automatically.
+
+In `/boot/firmware/config.txt` the overlay can be activated with:
+
+```
+dtoverlay=ft6336g
+```

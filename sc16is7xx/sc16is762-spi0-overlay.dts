@@ -11,7 +11,7 @@
                         #size-cells = <0>;
                         status = "okay";
 
-                        sc16is762: sc16is762@0 {
+                        sc16is762: sc16is762@1 {
                                 compatible = "nxp,sc16is762";
                                 reg = <1>; /* CE1 */
                                 clocks = <&sc16is762_clk>;
@@ -27,7 +27,7 @@
         };
 
         fragment@1 {
-                target = <&spidev0>;
+                target = <&spidev1>;
                 __overlay__ {
                         status = "disabled";
                 };
@@ -47,7 +47,7 @@
         fragment@3 {
                 target = <&gpio>;
                 __overlay__ {
-                        int_pins: int_pins@18 {
+                        int_pins: int_pins@23 {
                                         brcm,pins = <23>;
                                         brcm,function = <0>; /* in */
                                         brcm,pull = <0>; /* none */
